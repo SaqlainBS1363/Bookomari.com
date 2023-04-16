@@ -31,6 +31,7 @@ namespace Bookomari.com.Migrations
                 {
                     BookId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    BookName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Language = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BookCoverPhoto = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     AuthorId = table.Column<int>(type: "int", nullable: false)

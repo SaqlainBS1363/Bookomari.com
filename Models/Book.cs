@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bookomari.com.Models
 {
@@ -6,9 +7,14 @@ namespace Bookomari.com.Models
     {
         [Key]
         public int BookId { get; set; }
+        [Required]
+        public string BookName { get; set; }
         public string Language { get; set; }
         public byte[] BookCoverPhoto { get; set; }
-        // Foreign Key
+
+        [ForeignKey("AuthorId")]
         public int AuthorId { get; set; }
+        public Author Author { get; set; }
+
     }
 }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bookomari.com.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230415194620_AddBookomariToDatabase")]
+    [Migration("20230416104555_AddBookomariToDatabase")]
     partial class AddBookomariToDatabase
     {
         /// <inheritdoc />
@@ -64,6 +64,10 @@ namespace Bookomari.com.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("BookName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Language")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -77,11 +81,13 @@ namespace Bookomari.com.Migrations
 
             modelBuilder.Entity("Bookomari.com.Models.Book", b =>
                 {
-                    b.HasOne("Bookomari.com.Models.Author", null)
+                    b.HasOne("Bookomari.com.Models.Author", "Author")
                         .WithMany("Books")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Bookomari.com.Models.Author", b =>

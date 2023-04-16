@@ -61,6 +61,10 @@ namespace Bookomari.com.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("BookName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Language")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -74,11 +78,13 @@ namespace Bookomari.com.Migrations
 
             modelBuilder.Entity("Bookomari.com.Models.Book", b =>
                 {
-                    b.HasOne("Bookomari.com.Models.Author", null)
+                    b.HasOne("Bookomari.com.Models.Author", "Author")
                         .WithMany("Books")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Bookomari.com.Models.Author", b =>
