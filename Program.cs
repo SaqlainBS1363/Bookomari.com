@@ -1,3 +1,6 @@
+using Bookomari.com.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace Bookomari.com
 {
     public class Program
@@ -8,6 +11,9 @@ namespace Bookomari.com
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+                builder.Configuration.GetConnectionString("DefaultConnection")
+                ));
 
             var app = builder.Build();
 
