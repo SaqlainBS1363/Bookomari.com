@@ -1,6 +1,7 @@
 ﻿using Bookomari.com.Data;
 using Bookomari.com.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bookomari.com.Controllers
@@ -13,82 +14,137 @@ namespace Bookomari.com.Controllers
         {
             this._DbContext = _DbContext;
         }
-        /*
-           var author1 = new Author
-            {
-                AuthorName = "John Doe",
-                Address = "London",
-                AuthorPhoto = System.IO.File.ReadAllBytes(@"C:\Users\Saqlain\source\repos\Bookomari.com\AuthorImages\author1.png")
-            };
 
-            _DbContext.Authors.Add(author1);
-            _DbContext.SaveChanges();
 
-            var book1 = new Book
-            {
-                BookName = "Health",
-                Language = "English",
-                BookCoverPhoto = System.IO.File.ReadAllBytes(@"C:\Users\Saqlain\source\repos\Bookomari.com\BookImages\book.jpg"),
-                Author = author1
-            };
-
-            _DbContext.Books.Add(book1);
-            _DbContext.SaveChanges();
-         */
 
         public IActionResult Index()
         {
-            IEnumerable<Book> bookList = _DbContext.Books;
+            IEnumerable<Book> bookList = null;
+
+            if (!_DbContext.Authors.Any())
+            { 
+                string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
+                var author1 = new Author
+                {
+                    AuthorName = "GG Ctan",
+                    Address = "Paris",
+                    AuthorPhoto = System.IO.File.ReadAllBytes(path + @"\AuthorImages\author1.png")
+                };
+
+                _DbContext.Authors.Add(author1);
+                _DbContext.SaveChanges();
+
+                var book1 = new Book
+                {
+                    BookName = "Psyco",
+                    Language = "German",
+                    BookCoverPhoto = System.IO.File.ReadAllBytes(path + @"\BookImages\book.jpg"),
+                    Author = author1
+                };
+
+                _DbContext.Books.Add(book1);
+                _DbContext.SaveChanges();
+            }
+
+            bookList = _DbContext.Books;
+
 
             return View(bookList);
         }
 
-        public IActionResult Details(int? id)
+
+
+
+        public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || id == 0)
+            if (id == null)
             {
                 return NotFound();
             }
-            var bookFromDB = _DbContext.Books.Find(id);
+            var book = await _DbContext.Books
+                .Include(b => b.Author)
+                .FirstOrDefaultAsync(m => m.BookId == id);
 
-            if (bookFromDB == null)
+            if (book == null)
             {
                 return NotFound();
             }
 
-            return View(bookFromDB);
+            return View(book);
         }
 
+
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            var bookFromDB = _DbContext.Books.Find(id);
+            // Find the book to edit
+            Book book = await _DbContext.Books.FindAsync(id);
 
-            if (bookFromDB == null)
+            // If the book doesn't exist, return a 404 error
+            if (book == null)
             {
                 return NotFound();
             }
 
-            return View(bookFromDB);
+            string fileName = "book.jpg";
+
+            BookEditViewModel viewModel;
+
+            using (var stream = new MemoryStream(book.BookCoverPhoto))
+            {
+                var file = new FormFile(stream, 0, stream.Length, null, fileName)
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "image/jpeg" // set the content type of your image here
+                };
+
+                // now you can use the IFormFile object as needed
+                // Create a new view model for the edit form
+                viewModel = new BookEditViewModel
+                {
+                    BookId = book.BookId,
+                    BookName = book.BookName,
+                    Language = book.Language,
+                    CoverPhoto = file
+                };
+            }
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Book obj)
+        public async Task<IActionResult> Edit(int id, BookEditViewModel model)
         {
+            if (id != model.BookId)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
-                _DbContext.Books.Update(obj);
-                _DbContext.SaveChanges();
-                //TempData["success"] = "Category updated succesfully!";
-                return RedirectToAction("Index");
+                var book = await _DbContext.Books
+                        .Include(b => b.Author)
+                        .FirstOrDefaultAsync(b => b.BookId == id);
+
+                if (book == null)
+                {
+                    return NotFound();
+                }
+
+                book.BookName = model.BookName;
+                book.Language = model.Language;
+                book.BookCoverPhoto = await model.GetImageBytesAsync();
+
+                _DbContext.Books.Update(book);
+                await _DbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            return View(obj);
+
+            return View(model);
         }
+
+
+
 
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)

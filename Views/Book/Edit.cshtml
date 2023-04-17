@@ -1,4 +1,4 @@
-﻿@model Bookomari.com.Models.Book
+﻿@model Bookomari.com.Models.BookEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -11,8 +11,7 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="BookId" />
+            <input type="hidden" asp-for="BookId"/>
             <div class="form-group">
                 <label asp-for="BookName" class="control-label"></label>
                 <input asp-for="BookName" class="form-control" />
@@ -24,21 +23,18 @@
                 <span asp-validation-for="Language" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="BookCoverPhoto" class="control-label">Select an image</label>
-                @if (Model.BookCoverPhoto != null)
-                {
-                    <img src="data:image;base64,@Convert.ToBase64String(Model.BookCoverPhoto)" alt="Book cover photo" width="200" height="200" />
-                }
-                <input asp-for="BookCoverPhoto" class="form-control" type="file" class="form-control-file" />
-                <span asp-validation-for="BookCoverPhoto" class="text-danger"></span>
-            </div>            
+                <label asp-for="CoverPhoto" class="control-label">Select an image</label>                             
+                <input asp-for="CoverPhoto" class="form-control-file" type="file" />
+                <span asp-validation-for="CoverPhoto" class="text-danger"></span>
+            </div>  
+            <br />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
+<br />
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

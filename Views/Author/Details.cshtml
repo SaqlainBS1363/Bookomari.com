@@ -1,10 +1,10 @@
 ﻿@model Bookomari.com.Models.Author
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Details";
 }
 
-<h1>Index</h1>
+<h1>Details</h1>
 
 <div>
     <h4>Author</h4>
@@ -22,7 +22,12 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Address)
         </dd>
-        
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AuthorPhoto)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="data:image;base64,@Convert.ToBase64String(Model.AuthorPhoto)" alt="Book cover photo" />
+        </dd>
     </dl>
 </div>
 <div>

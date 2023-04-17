@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bookomari.com.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230416104555_AddBookomariToDatabase")]
+    [Migration("20230417062338_AddBookomariToDatabase")]
     partial class AddBookomariToDatabase
     {
         /// <inheritdoc />
