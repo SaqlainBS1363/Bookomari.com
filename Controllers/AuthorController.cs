@@ -36,6 +36,7 @@ namespace Bookomari.com.Controllers
             }
 
             var author = await _context.Authors
+                .Include(b => b.Books)
                 .FirstOrDefaultAsync(m => m.AuthorId == id);
             if (author == null)
             {

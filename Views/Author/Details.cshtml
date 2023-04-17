@@ -28,6 +28,16 @@
         <dd class="col-sm-10">
             <img src="data:image;base64,@Convert.ToBase64String(Model.AuthorPhoto)" alt="Book cover photo" />
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Books)
+        </dt>
+        @foreach(var item in Model.Books.ToList())
+        {
+            <dt class="col-sm-2">
+                @item.BookName
+            </dt>
+            <br />
+        }
     </dl>
 </div>
 <div>

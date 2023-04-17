@@ -13,10 +13,10 @@
                 @Html.DisplayNameFor(model => model.BookName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BookCoverPhoto)
+                @Html.DisplayNameFor(model => model.Author.AuthorName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AuthorId)
+                @Html.DisplayNameFor(model => model.BookCoverPhoto)
             </th>
             <th></th>
         </tr>
@@ -28,10 +28,10 @@
                 @Html.DisplayFor(modelItem => item.BookName)
             </td>
             <td>
-                 <img src="data:image;base64,@Convert.ToBase64String(item.BookCoverPhoto)" alt="Book cover photo" width="200" height="200" />
+                @Html.DisplayFor(modelItem => item.Author.AuthorName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AuthorId)
+                <img src="data:image;base64,@Convert.ToBase64String(item.BookCoverPhoto)" alt="Book cover photo" width="200" height="200" />
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |

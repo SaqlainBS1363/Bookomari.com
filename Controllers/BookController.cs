@@ -17,13 +17,12 @@ namespace Bookomari.com.Controllers
 
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Book> bookList = null;
-
             if (!_DbContext.Authors.Any())
             { 
-                string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
+                //string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
+                string path = @"C:\Users\Saqlain\source\repos\Bookomari.com";
                 var author1 = new Author
                 {
                     AuthorName = "GG Ctan",
@@ -46,8 +45,9 @@ namespace Bookomari.com.Controllers
                 _DbContext.SaveChanges();
             }
 
-            bookList = _DbContext.Books;
-
+            var bookList = await _DbContext.Books
+                .Include(b => b.Author)
+                .ToListAsync();
 
             return View(bookList);
         }
