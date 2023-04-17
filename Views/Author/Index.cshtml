@@ -1,4 +1,4 @@
-﻿@model Bookomari.com.Models.Author
+﻿@model IEnumerable<Bookomari.com.Models.Author>
 
 @{
     ViewData["Title"] = "Index";
@@ -6,26 +6,42 @@
 
 <h1>Index</h1>
 
-<div>
-    <h4>Author</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AuthorName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AuthorName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.AuthorId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.AuthorName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AuthorPhoto)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AuthorName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AuthorPhoto)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.AuthorId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.AuthorId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.AuthorId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
