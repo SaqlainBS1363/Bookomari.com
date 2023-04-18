@@ -11,15 +11,13 @@ namespace Bookomari.com.Models
         public string Address { get; set; }
 
         [Display(Name = "Author Photo")]
-        public IFormFile CoverPhoto { get; set; }
+        public IFormFile AuthorPhoto { get; set; }
 
         public async Task<byte[]> GetImageBytesAsync()
         {
             using var stream = new MemoryStream();
-            await CoverPhoto.CopyToAsync(stream);
+            await AuthorPhoto.CopyToAsync(stream);
             return stream.ToArray();
         }
-
-        public ICollection<Book> Books { get; set; }
     }
 }

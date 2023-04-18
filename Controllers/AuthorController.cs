@@ -22,9 +22,37 @@ namespace Bookomari.com.Controllers
         // GET: Author
         public async Task<IActionResult> Index()
         {
-              return _context.Authors != null ? 
-                          View(await _context.Authors.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Authors'  is null.");
+            if (!_context.Authors.Any())
+            {
+                string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
+                /*string path = @"C:\Users\Saqlain\source\repos\Bookomari.com";
+                var author1 = new Author
+                {
+                    AuthorName = "GG Ctan",
+                    Address = "Paris",
+                    AuthorPhoto = System.IO.File.ReadAllBytes(path + @"\AuthorImages\author1.png")
+                };
+
+                _context.Authors.Add(author1);
+                _context.SaveChanges();*/
+
+                var book1 = new Book
+                {
+                    BookName = "WQERQ",
+                    Language = "Chinese",
+                    BookCoverPhoto = System.IO.File.ReadAllBytes(path + @"\BookImages\book.jpg"),
+                    Author = await _context.Authors.FirstOrDefaultAsync(m => m.AuthorId == 5)
+                };
+
+                _context.Books.Add(book1);
+                _context.SaveChanges();
+            }
+
+            var authorList = await _context.Authors
+                .Include(b => b.Books)
+                .ToListAsync();
+
+            return View(authorList);
         }
 
         // GET: Author/Details/5
@@ -57,31 +85,58 @@ namespace Bookomari.com.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AuthorId,AuthorName,Address,AuthorPhoto")] Author author)
+        public async Task<IActionResult> Create(AuthorEditViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(author);
+                var author = new Author();
+
+                author.AuthorName = model.AuthorName;
+                author.Address = model.Address;
+                author.AuthorPhoto = await model.GetImageBytesAsync();
+
+                _context.Authors.Add(author);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(author);
+            return View(model);
         }
 
         // GET: Author/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Authors == null)
-            {
-                return NotFound();
-            }
+            // Find the author to edit
+            Author author = await _context.Authors.FindAsync(id);
 
-            var author = await _context.Authors.FindAsync(id);
+            // If the author doesn't exist, return a 404 error
             if (author == null)
             {
                 return NotFound();
             }
-            return View(author);
+
+            string fileName = "author.jpg";
+
+            AuthorEditViewModel viewModel;
+
+            using (var stream = new MemoryStream(author.AuthorPhoto))
+            {
+                var file = new FormFile(stream, 0, stream.Length, null, fileName)
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "image/jpeg" // set the content type of your image here
+                };
+
+                // now you can use the IFormFile object as needed
+                // Create a new view model for the edit form
+                viewModel = new AuthorEditViewModel
+                {
+                    AuthorId = author.AuthorId,
+                    AuthorName = author.AuthorName,
+                    Address = author.Address,
+                    AuthorPhoto = file
+                };
+            }
+            return View(viewModel);
         }
 
         // POST: Author/Edit/5
@@ -89,34 +144,33 @@ namespace Bookomari.com.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AuthorId,AuthorName,Address,AuthorPhoto")] Author author)
+        public async Task<IActionResult> Edit(int id, AuthorEditViewModel model)
         {
-            if (id != author.AuthorId)
+            if (id != model.AuthorId)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                var author = await _context.Authors
+                        .Include(b => b.Books)
+                        .FirstOrDefaultAsync(b => b.AuthorId == id);
+
+                if (author == null)
                 {
-                    _context.Update(author);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AuthorExists(author.AuthorId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                author.AuthorName = model.AuthorName;
+                author.Address = model.Address;
+                author.AuthorPhoto = await model.GetImageBytesAsync();
+
+                _context.Authors.Update(author);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(author);
+            return View(model);
         }
 
         // GET: Author/Delete/5
@@ -127,8 +181,7 @@ namespace Bookomari.com.Controllers
                 return NotFound();
             }
 
-            var author = await _context.Authors
-                .FirstOrDefaultAsync(m => m.AuthorId == id);
+            var author = await _context.Authors.FirstOrDefaultAsync(m => m.AuthorId == id);
             if (author == null)
             {
                 return NotFound();

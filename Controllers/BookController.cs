@@ -21,8 +21,8 @@ namespace Bookomari.com.Controllers
         {
             if (!_DbContext.Authors.Any())
             { 
-                //string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
-                string path = @"C:\Users\Saqlain\source\repos\Bookomari.com";
+                string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
+                //string path = @"C:\Users\Saqlain\source\repos\Bookomari.com";
                 var author1 = new Author
                 {
                     AuthorName = "GG Ctan",
