@@ -25,7 +25,7 @@ namespace Bookomari.com.Controllers
             if (!_context.Authors.Any())
             {
                 string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
-                /*string path = @"C:\Users\Saqlain\source\repos\Bookomari.com";
+                //string path = @"C:\Users\Saqlain\source\repos\Bookomari.com";
                 var author1 = new Author
                 {
                     AuthorName = "GG Ctan",
@@ -34,7 +34,7 @@ namespace Bookomari.com.Controllers
                 };
 
                 _context.Authors.Add(author1);
-                _context.SaveChanges();*/
+                _context.SaveChanges();
 
                 var book1 = new Book
                 {
