@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bookomari.com.Models
 {
@@ -19,6 +20,8 @@ namespace Bookomari.com.Models
             await CoverPhoto.CopyToAsync(stream);
             return stream.ToArray();
         }
-    }
+        public Author Author { get; set; }
+        public int AuthorId { get; set; }
 
+    }
 }

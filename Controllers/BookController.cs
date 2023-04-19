@@ -74,11 +74,36 @@ namespace Bookomari.com.Controllers
         }
 
 
+        // POST: Book/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(BookEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var book = new Book();
+
+                book.BookName = model.BookName;
+                book.Language = model.Language;
+                book.BookCoverPhoto = await model.GetImageBytesAsync();
+
+                _DbContext.Books.Add(book);
+                await _DbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(model);
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             // Find the book to edit
-            Book book = await _DbContext.Books.FindAsync(id);
+            var book = await _DbContext.Books
+                .Include(b => b.Author)
+                .FirstOrDefaultAsync(m => m.BookId == id);
 
             // If the book doesn't exist, return a 404 error
             if (book == null)
@@ -105,7 +130,9 @@ namespace Bookomari.com.Controllers
                     BookId = book.BookId,
                     BookName = book.BookName,
                     Language = book.Language,
-                    CoverPhoto = file
+                    CoverPhoto = file,
+                    AuthorId = book.AuthorId,
+                    Author = book.Author
                 };
             }
             return View(viewModel);
@@ -123,7 +150,6 @@ namespace Bookomari.com.Controllers
             if (ModelState.IsValid)
             {
                 var book = await _DbContext.Books
-                        .Include(b => b.Author)
                         .FirstOrDefaultAsync(b => b.BookId == id);
 
                 if (book == null)
@@ -134,6 +160,8 @@ namespace Bookomari.com.Controllers
                 book.BookName = model.BookName;
                 book.Language = model.Language;
                 book.BookCoverPhoto = await model.GetImageBytesAsync();
+                /*book.AuthorId = model.AuthorId;
+                book.Author = model.Author;*/
 
                 _DbContext.Books.Update(book);
                 await _DbContext.SaveChangesAsync();
