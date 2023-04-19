@@ -73,6 +73,21 @@ namespace Bookomari.com.Controllers
             return View(book);
         }
 
+        // GET: Book/Create
+        public IActionResult Create()
+        {
+            // retrieve all authors from the database
+            var authors = _DbContext.Authors.ToList();
+
+            // create a new instance of the BookEditViewModel
+            var model = new BookEditViewModel();
+
+            // set the Authors property to a SelectList containing all authors
+            ViewBag.Authors = new SelectList(authors, "AuthorId", "AuthorName");
+
+            return View(model);
+        }
+
 
         // POST: Book/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -81,14 +96,18 @@ namespace Bookomari.com.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookEditViewModel model)
         {
-            if (ModelState.IsValid)
+            var author = _DbContext.Authors.Find(model.AuthorId);
+            model.Author = author;
+
+            //if (ModelState.IsValid)
             {
                 var book = new Book();
 
                 book.BookName = model.BookName;
                 book.Language = model.Language;
                 book.BookCoverPhoto = await model.GetImageBytesAsync();
-
+                book.Author = model.Author;
+                book.AuthorId = model.AuthorId;
                 _DbContext.Books.Add(book);
                 await _DbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

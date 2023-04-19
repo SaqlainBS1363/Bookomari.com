@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
+    var Authors = ViewBag.Authors;
 }
 
 <h1>Create</h1>
@@ -24,13 +25,21 @@
             </div>
             <div class="form-group">
                 <label asp-for="CoverPhoto" class="control-label"></label>
-                <input asp-for="CoverPhoto" class="form-control" type="file" />
+                <input asp-for="CoverPhoto" class="form-control-file" type="file" />
                 <span asp-validation-for="CoverPhoto" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="AuthorId" class="control-label"></label>
-                <select asp-for="AuthorId" class ="form-control" asp-items="ViewBag.AuthorId"></select>
+                <select asp-for="AuthorId" class ="form-control" asp-items="Authors"></select>
+                @*@<input type="hidden" asp-for="AuthorId" />
+                <input type="hidden" asp-for="Author.AuthorId" />
+                <input type="hidden" asp-for="Author.AuthorName" />
+                <input type="hidden" asp-for="Author.Address" />
+                <input type="hidden" asp-for="Author.AuthorPhoto" />
+                <input type="hidden" asp-for="Author.Books" />*@
+                
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
