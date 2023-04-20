@@ -8,44 +8,44 @@ namespace Bookomari.com.Controllers
 {
     public class BookController : Controller
     {
-        private readonly ApplicationDbContext _DbContext;
+        private readonly ApplicationDbContext _context;
 
-        public BookController(ApplicationDbContext _DbContext)
+        public BookController(ApplicationDbContext _context)
         {
-            this._DbContext = _DbContext;
+            this._context = _context;
         }
 
 
 
         public async Task<IActionResult> Index()
         {
-            if (!_DbContext.Authors.Any())
-            { 
-                string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
-                //string path = @"C:\Users\Saqlain\source\repos\Bookomari.com";
+            if (!_context.Authors.Any())
+            {
+                //string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
+                string path = @"C:\Users\Saqlain\source\repos\Bookomari.com";
                 var author1 = new Author
                 {
-                    AuthorName = "GG Ctan",
-                    Address = "Paris",
-                    AuthorPhoto = System.IO.File.ReadAllBytes(path + @"\AuthorImages\author1.png")
+                    AuthorName = "Md. Anwarul Habib",
+                    Address = "7/13, Block-B, Lalmatia, Dhaka-1207",
+                    AuthorPhoto = System.IO.File.ReadAllBytes(path + @"\AuthorImages\author1.jpg")
                 };
 
-                _DbContext.Authors.Add(author1);
-                _DbContext.SaveChanges();
+                _context.Authors.Add(author1);
+                _context.SaveChanges();
 
                 var book1 = new Book
                 {
-                    BookName = "Psyco",
-                    Language = "German",
+                    BookName = "Basics of C#",
+                    Language = "English",
                     BookCoverPhoto = System.IO.File.ReadAllBytes(path + @"\BookImages\book.jpg"),
                     Author = author1
                 };
 
-                _DbContext.Books.Add(book1);
-                _DbContext.SaveChanges();
+                _context.Books.Add(book1);
+                _context.SaveChanges();
             }
 
-            var bookList = await _DbContext.Books
+            var bookList = await _context.Books
                 .Include(b => b.Author)
                 .ToListAsync();
 
@@ -61,7 +61,7 @@ namespace Bookomari.com.Controllers
             {
                 return NotFound();
             }
-            var book = await _DbContext.Books
+            var book = await _context.Books
                 .Include(b => b.Author)
                 .FirstOrDefaultAsync(m => m.BookId == id);
 
@@ -77,7 +77,7 @@ namespace Bookomari.com.Controllers
         public IActionResult Create()
         {
             // retrieve all authors from the database
-            var authors = _DbContext.Authors.ToList();
+            var authors = _context.Authors.ToList();
 
             // create a new instance of the BookEditViewModel
             var model = new BookEditViewModel();
@@ -96,20 +96,20 @@ namespace Bookomari.com.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookEditViewModel model)
         {
-            var author = _DbContext.Authors.Find(model.AuthorId);
-            model.Author = author;
+            var author = _context.Authors.Find(model.AuthorId);
+            //model.Author = author;
 
-            //if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var book = new Book();
 
                 book.BookName = model.BookName;
                 book.Language = model.Language;
                 book.BookCoverPhoto = await model.GetImageBytesAsync();
-                book.Author = model.Author;
+                book.Author = author;
                 book.AuthorId = model.AuthorId;
-                _DbContext.Books.Add(book);
-                await _DbContext.SaveChangesAsync();
+                _context.Books.Add(book);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -120,7 +120,7 @@ namespace Bookomari.com.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             // Find the book to edit
-            var book = await _DbContext.Books
+            var book = await _context.Books
                 .Include(b => b.Author)
                 .FirstOrDefaultAsync(m => m.BookId == id);
 
@@ -150,8 +150,7 @@ namespace Bookomari.com.Controllers
                     BookName = book.BookName,
                     Language = book.Language,
                     CoverPhoto = file,
-                    AuthorId = book.AuthorId,
-                    Author = book.Author
+                    AuthorId = book.AuthorId
                 };
             }
             return View(viewModel);
@@ -168,7 +167,7 @@ namespace Bookomari.com.Controllers
 
             if (ModelState.IsValid)
             {
-                var book = await _DbContext.Books
+                var book = await _context.Books
                         .FirstOrDefaultAsync(b => b.BookId == id);
 
                 if (book == null)
@@ -182,8 +181,8 @@ namespace Bookomari.com.Controllers
                 /*book.AuthorId = model.AuthorId;
                 book.Author = model.Author;*/
 
-                _DbContext.Books.Update(book);
-                await _DbContext.SaveChangesAsync();
+                _context.Books.Update(book);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -196,12 +195,12 @@ namespace Bookomari.com.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _DbContext.Books == null)
+            if (id == null || _context.Books == null)
             {
                 return NotFound();
             }
 
-            var book = await _DbContext.Books.FirstOrDefaultAsync(m => m.BookId == id);
+            var book = await _context.Books.FirstOrDefaultAsync(m => m.BookId == id);
             if (book == null)
             {
                 return NotFound();
@@ -214,17 +213,17 @@ namespace Bookomari.com.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            if (_DbContext.Books == null)
+            if (_context.Books == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Books' is null.");
             }
-            var book = await _DbContext.Books.FindAsync(id);
+            var book = await _context.Books.FindAsync(id);
             if (book != null)
             {
-                _DbContext.Books.Remove(book);
+                _context.Books.Remove(book);
             }
 
-            await _DbContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

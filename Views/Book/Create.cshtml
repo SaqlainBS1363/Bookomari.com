@@ -31,15 +31,14 @@
             <div class="form-group">
                 <label asp-for="AuthorId" class="control-label"></label>
                 <select asp-for="AuthorId" class ="form-control" asp-items="Authors"></select>
-                @*@<input type="hidden" asp-for="AuthorId" />
+                @*<input type="hidden" asp-for="AuthorId" />
                 <input type="hidden" asp-for="Author.AuthorId" />
                 <input type="hidden" asp-for="Author.AuthorName" />
                 <input type="hidden" asp-for="Author.Address" />
                 <input type="hidden" asp-for="Author.AuthorPhoto" />
-                <input type="hidden" asp-for="Author.Books" />*@
-                
+                <input type="hidden" asp-for="Author.Books" />*@                
             </div>
-
+            <br />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
