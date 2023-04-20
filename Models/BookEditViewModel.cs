@@ -20,7 +20,7 @@ namespace Bookomari.com.Models
             await CoverPhoto.CopyToAsync(stream);
             return stream.ToArray();
         }
-        public Author Author { get; set; }
+        //public Author Author { get; set; }
         public int AuthorId { get; set; }
 
     }

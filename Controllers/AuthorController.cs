@@ -22,32 +22,6 @@ namespace Bookomari.com.Controllers
         // GET: Author
         public async Task<IActionResult> Index()
         {
-            if (!_context.Authors.Any())
-            {
-                string path = @"C:\Users\BS1042\Source\Repos\Bookomari.com";
-                //string path = @"C:\Users\Saqlain\source\repos\Bookomari.com";
-                var author1 = new Author
-                {
-                    AuthorName = "GG Ctan",
-                    Address = "Paris",
-                    AuthorPhoto = System.IO.File.ReadAllBytes(path + @"\AuthorImages\author1.png")
-                };
-
-                _context.Authors.Add(author1);
-                _context.SaveChanges();
-
-                var book1 = new Book
-                {
-                    BookName = "WQERQ",
-                    Language = "Chinese",
-                    BookCoverPhoto = System.IO.File.ReadAllBytes(path + @"\BookImages\book.jpg"),
-                    Author = await _context.Authors.FirstOrDefaultAsync(m => m.AuthorId == 5)
-                };
-
-                _context.Books.Add(book1);
-                _context.SaveChanges();
-            }
-
             var authorList = await _context.Authors
                 .Include(b => b.Books)
                 .ToListAsync();
