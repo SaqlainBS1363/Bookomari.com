@@ -6,9 +6,9 @@ namespace Bookomari.com.Models
     public class BookEditViewModel
     {
         public int BookId { get; set; }
-
+        [Display(Name = "Book Name")]
         public string BookName { get; set; }
-
+        [Display(Name = "Book Language")]
         public string Language { get; set; }
 
         [Display(Name = "Book Cover Photo")]
