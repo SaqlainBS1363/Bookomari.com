@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Bookomari.com.Models.Book>
+﻿@model Bookomari.com.Models.BookSearchViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -10,23 +10,39 @@
     <a asp-action="Create" >Create New Book</a>
 </p>
 
+<form asp-action="Index" method="get">
+    <div class="form-group row">
+        <label asp-for="BookSearchString" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-6">
+            <input type="text" asp-for="BookSearchString" class="form-control" placeholder="Search by Book Name">
+            <div id="search-results"></div>
+        </div>
+        <div class="col-sm-4">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+<br />
+<br />
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.BookName)
+                @Html.DisplayNameFor(model => model.Books.FirstOrDefault().BookName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Author.AuthorName)
+                @Html.DisplayNameFor(model => model.Books.FirstOrDefault().Author.AuthorName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BookCoverPhoto)
+                @Html.DisplayNameFor(model => model.Books.FirstOrDefault().BookCoverPhoto)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
+    @foreach (var item in Model.Books) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.BookName)
@@ -46,3 +62,4 @@
     }
     </tbody>
 </table>
+

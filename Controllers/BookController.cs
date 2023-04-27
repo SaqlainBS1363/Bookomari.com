@@ -1,8 +1,13 @@
-﻿using Bookomari.com.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Bookomari.com.Data;
 using Bookomari.com.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Bookomari.com.Controllers
 {
@@ -16,8 +21,8 @@ namespace Bookomari.com.Controllers
         }
 
 
-
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(string BookSearchString)
         {
             if (!_context.Authors.Any())
             {
@@ -45,13 +50,21 @@ namespace Bookomari.com.Controllers
                 _context.SaveChanges();
             }
 
-            var bookList = await _context.Books
+            var bookList = new BookSearchViewModel();
+
+            bookList.Books = await _context.Books
                 .Include(b => b.Author)
                 .ToListAsync();
 
+            if (!String.IsNullOrEmpty(BookSearchString))
+            {
+                bookList.Books = bookList.Books.Where(b => b.BookName.Contains(BookSearchString));
+            }
+
+            bookList.BookSearchString = BookSearchString;
+
             return View(bookList);
         }
-
 
 
 

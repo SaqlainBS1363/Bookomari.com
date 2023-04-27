@@ -19,12 +19,23 @@ namespace Bookomari.com.Controllers
             _context = context;
         }
 
+
+
         // GET: Author
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string AuthorSearchString)
         {
-            var authorList = await _context.Authors
+            var authorList = new AuthorSearchViewModel();
+
+            authorList.Authors = await _context.Authors
                 .Include(b => b.Books)
                 .ToListAsync();
+
+            if (!String.IsNullOrEmpty(AuthorSearchString))
+            {
+                authorList.Authors = authorList.Authors.Where(b => b.AuthorName.Contains(AuthorSearchString));
+            }
+
+            authorList.AuthorSearchString = AuthorSearchString;
 
             return View(authorList);
         }
